@@ -1,0 +1,227 @@
+:toc:
+
+## Welcome to "docker-debug-1"
+
+This is a small example project with a goal to demonstrate how to setup a small dockerized project and debug inside the
+docker container.
+
+## Project setup
+
+### Clone this repository
+
+Use command to clone this repo.
+
+```bash
+git clone https://github.com/BorodaUA/git_actions_test.git
+```
+
+### Pre install requirements
+
+- Install https://www.docker.com/[docker]
+- Install https://docs.docker.com/compose/install/[docker compose]
+- Install https://code.visualstudio.com/download[VSCode IDE]
+- Install https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker&ssr=false#review-details[Docker extension]
+- Install remote extensions:
+* https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh
+* https://marketplace.visualstudio.com/items?itemName=ms-vscode.remote-explorer
+* https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack
+* https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh-edit
+* https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers
+
+## Setup `.env` file
+
+### Semi automatic `.env` file setup
+
+Use command make command to setup `.env` file.
+
+```bash
+make env_setup
+```
+
+NOTE: If you don't have `make` in your system you can follow a https://www.geeksforgeeks.org/how-to-install-make-on-ubuntu/[guide] how to install it, or use manual setup.
+
+### Manual `.env` file setup
+
+Create `.env` file in the repository root folder and copy there content of the `.env.example` file.
+
+## Run project docker compose
+
+### Run project docker compose with make commands
+
+* Use make command to build and run project's docker compose
+```bash
+make up
+```
+
+* Use make command to restart project's docker compose
+```bash
+make restart
+```
+
+* Use make command to stop project's docker compose
+```bash
+make stop
+```
+
+* Use make command to stop and remove containers of the project's docker compose
+```bash
+make down
+```
+
+### Run project docker compose with manual commands
+
+Be in the repository root folder and use following commands:
+
+* Use docker command to build and run project's docker compose
+
+```bash
+docker compose up -d
+```
+
+* Use docker command to stop and remove containers of the project's docker compose
+```bash
+docker compose down
+```
+
+## Connect to the running container
+
+With a running Docker container or Docker compose, open the Docker extension, right click on the container you want to connect into and select 'Attach Visual Studio Code'
+
+image::docs/images/Docker_extension_main_page.jpg[Docker_extension_main_page]
+
+An additional pop up window in the top middle of the screen might pop up with list of containers to select. In our case select `/example_app` container.
+
+image::docs/images/docker_extension_container_select.jpg[Docker_extension_container_select]
+
+A new window will show up and after short wait you will be connected to the container.
+
+## vscode dev container configuration setup
+
+Once you will be connected inside the container press `F1`(or equivalent for your system) and start typing: `open container conf` and select "open container configuration file"
+
+image::docs/images/dev_container_config_pop_up.jpg[dev_container_popup]
+
+You will open empty `.json` file
+
+image::docs/images/dev_container_empty_config.jpg[dev_container_popup]
+
+Edit that file with proposed configuration:
+
+```json
+{
+    "workspaceFolder": "/usr/src/app", 
+    "extensions": [
+		"donjayamanne.githistory",
+		"hbenl.vscode-test-explorer",
+		"ms-python.python",
+		"ms-python.vscode-pylance",
+		"ms-toolsai.jupyter",
+		"ms-toolsai.jupyter-keymap",
+		"ms-toolsai.jupyter-renderers",
+		"ms-vscode.test-adapter-converter"
+	]
+}
+```
+
+Here we setup vscode extensions that will be installed on connect to the container as well as `"workspaceFolder": "/usr/src/app"` the default folder what will be opened. Save the file manually if needed and close it.
+
+Next step we need to bring down our docker compose with make or manual commands and start docker compose again to make sure that changes above will take effect.
+
+## Create debug configuration .json file (Python examples)
+
+Open Run and debug section in vscode and click create a launch.json file button.
+
+A prompt window with supported configs will pop up this is why it is important to install python extension "ms-python.python" inside the container. 
+
+image::docs/images/debug_config_popup.jpg[dev_container_popup]
+
+Select Python then any configuration like "Python File".
+
+image::docs/images/debup_conf_name_pop_up.jpg[dev_container_popup]
+
+After that a json file with configurations will open up. This will create `.vscode` folder in the root of your `pwd` directory(in our case `/usr/src/app`).
+
+image::docs/images/python_file_conf.jpg[dev_container_popup]
+
+Here it is you have created your debug configuration and it is working in the file that you are currently open in the vscode.
+
+## Add new configurations in the debug `launch.json` file.
+
+* 1 Configuration with specific script name
+
+```json
+{
+	"name": "python debug_example_1.py",
+	"type": "python",
+	"request": "launch",
+	"program": "/usr/src/app/debug_example_1.py",
+	"console": "integratedTerminal",
+	"args": [],
+	"justMyCode": true
+}
+```
+
+This is an example of configuration to specific .py file
+Debug configuration equivalent to CLI command: `python /usr/src/app/debug_example_1.py`
+
+* 2 Configuration with specific script name and CLI arguments
+
+```json
+{
+	"name": "python debug_example_cli_1.py --name=John --age=25",
+	"type": "python",
+	"request": "launch",
+	"program": "/usr/src/app/debug_example_cli_1.py",
+	"console": "integratedTerminal",
+	"args": [
+		"--name=John",
+		"--age=25"
+	],
+	"justMyCode": true
+}
+```
+
+This is an example of configuration to specific .py file that accepts CLI arguments.
+Debug configuration equivalent to CLI command: `python /usr/src/app/debug_example_cli_1.py --name=bob --age=28`
+
+This is how `.vscode/launch.json` looks like with all the debug configs above.
+
+image::docs/images/debug_config_with_3_configs.jpg[debug_config_with_3_configs]
+
+You can put as many configurations as you want; "configurations": [] is just a list with json configurations.
+
+After the configuration setup, you will be able to run the configuration and place breakpoints to investigate and debug the code.
+
+## Debug configuration usage examples
+
+Go to the 'Run and Debug' section in vscode and select debug configuration you want to use.
+
+image::docs/images/debug_config_select.jpg[debug_config_select]
+
+### Usage example for specific `.py` file.
+
+Select `python debug_example_1.py` configuration and open `debug_example_1.py` file than place break points in for example `greet()` func. After that run the configuration by pressing `F5`(or equivalent button for your system mac,linux etc.) or green triangle button.
+
+image::docs/images/debug_variables_menu.jpg[debug_variables_menu]
+
+The break points should work and the execution of the code will be suspended. Select `variables` tab in your terminal where you can expand `locals` and `globals` menus to see all the variables.
+
+Control the execution with https://code.visualstudio.com/docs/editor/debugging#_debug-actions[Keys] to traverse through the code.
+
+
+### Usage example for specific `.py` file that takes CLI arguments.
+
+Select `python debug_example_cli_1.py --name=John --age=25` configuration and open `debug_example_cli_1.py` file than place break points in for example `greet_cli()` func. After that run the configuration by pressing `F5`(or equivalent button for your system mac,linux etc.) or green triangle button.
+
+image::docs/images/debug_cli_with_args.jpg[debug_cli_with_args]
+
+The break points should work and the execution of the code will be suspended. Select `variables` tab in your terminal where you can expand `locals` and `globals` menus to see all the variables.
+
+Control the execution with https://code.visualstudio.com/docs/editor/debugging#_debug-actions[Keys] to traverse through the code.
+
+You can change variables that you passing to the script by redacting the debug config.
+
+
+## Closing notes
+
+Debug in the docker containers with vscode requires a little bit of manual setup but the advantages is very big. I highly recommend to read https://code.visualstudio.com/docs/editor/debugging[official] readme on vscode debugging setup. Happy bug hunting!
