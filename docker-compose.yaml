@@ -1,0 +1,45 @@
+version: '3'
+
+volumes:
+  app_volume:
+  mongo-data:
+
+services:
+
+### ================ MONGO ==================
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    command: ["--bind_ip", "mongodb"]
+    env_file:
+      - .env
+    ports:
+      - 27017:27017
+    volumes:
+      - app_volume:/storage
+      - mongo-data:/data/db
+
+### ================ REDIS ==================
+
+  redis:
+    image: redis
+    env_file:
+      - .env
+    ports:
+      - 6379:6379
+
+### ================ EXAMPLE_APP ==================
+
+  example_app:
+      build: ./
+      container_name: example_app
+      command: 
+        "/bin/sh -c /usr/src/app/entrypoint.sh"
+      env_file:
+        - .env
+      volumes:
+        - app_volume:/storage
+      depends_on:
+        - mongodb
+        - redis
