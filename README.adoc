@@ -93,9 +93,11 @@ docker compose down
 
 ## Connect to the running container
 
-With a running Docker container or Docker compose, open the Docker extension, right click on the container you want to connect into and select 'Attach Visual Studio Code'
+With a running Docker container or Docker compose, open the Docker extension (a little whale on the left side of VSCode), right click on the container you want to connect into and select 'Attach Visual Studio Code'
 
 image::docs/images/Docker_extension_main_page.jpg[Docker_extension_main_page]
+
+If the Docker extension is not visible in your left menu bar, you may need to show it by clicking on the three horizontal dots and selecting "Docker" from the list.
 
 An additional pop-up window in the top middle of the screen might pop up with a list of containers to select. In our case select the `/example_app` container.
 
@@ -105,7 +107,7 @@ A new window will show up and after a short wait you will be connected to the co
 
 ## vscode dev container configuration setup
 
-Once you are connected inside the container press `F1` (or the equivalent for your system) and start typing: `open container conf` and select "open container configuration file"
+Once you are connected inside the container press `F1`, `CMD+SHIFT+P` (Mac). or the equivalent for your system, and start typing: `open container conf` and select "open container configuration file"
 
 image::docs/images/dev_container_config_pop_up.jpg[dev_container_popup]
 
@@ -131,15 +133,15 @@ Edit that file with the following proposed configuration:
 }
 ```
 
-Here we set up VSCode extensions that will be installed on connecting to the container as well as `"workspaceFolder": "/usr/src/app"` the default folder what will be opened. Save the file manually if needed and close it.
+Here we add the VSCode extensions that will be installed when connecting to the container as well as `"workspaceFolder": "/usr/src/app"` the default folder what will be opened. Save the file manually if needed and close it.
 
-In the next step we need to bring down our docker compose with make or manual commands and start docker compose again to make sure that the changes above will take effect.
+In the next step we need to restart our docker compose using `make restart` or manual commands to make sure that the changes above will take effect.
 
 ## Create a debug configuration .json file (Python examples)
 
-Open the Run and debug section in VSCode and click create a launch.json file button.
+Open the Run and debug section in VSCode (the 'play' button on the left, with a bug on it) and click create a launch.json file button.
 
-A prompt window with supported configs will pop up. This is why it is important to install the python extension "ms-python.python" inside the container. 
+A prompt window with supported configs will pop up. Select 'install extensions' and install the python extension "ms-python.python" extension (including Intellisense and other debugging tools) inside the container. It may be necessary to `make restart` again before trying to use the Python debugging tools below. 
 
 image::docs/images/debug_config_popup.jpg[dev_container_popup]
 
@@ -198,7 +200,7 @@ image::docs/images/debug_config_with_3_configs.jpg[debug_config_with_3_configs]
 
 You can put as many configurations as you want; "configurations": [] is just a list with json configurations.
 
-After the configuration setup, you will be able to run the configuration and place breakpoints to investigate and debug the code.
+After the configurations are set up, you will be able to run the configuration and place breakpoints to investigate and debug the code.
 
 ## Debug configuration usage examples
 
@@ -208,7 +210,7 @@ image::docs/images/debug_config_select.jpg[debug_config_select]
 
 ### Usage example for a specific `.py` file.
 
-Select the `python debug_example_1.py` configuration and open the `debug_example_1.py` file, then place break points, for example within the `greet()` function. After that, run the configuration by pressing `F5` (or the equivalent button for your system Mac, Linux etc.) or the green triangle button.
+Select the `python debug_example_1.py` configuration and open the `debug_example_1.py` file, then place break points, for example within the `greet()` function. After that, run the configuration by pressing `F5`, (or the equivalent button for your system Mac, Linux etc.) or the green triangle button next to `python` in the top left.
 
 image::docs/images/debug_variables_menu.jpg[debug_variables_menu]
 
