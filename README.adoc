@@ -18,6 +18,15 @@ git clone https://github.com/BorodaUA/git_actions_test.git
 
 - Install https://www.docker.com/[docker]
 - Install https://docs.docker.com/compose/install/[docker compose]
+
+For docker compose on Mac, it is currently installed with the Docker Desktop, but may not be linked. If you get an error in docker compose from the `make up` command below, run:
+
+```bash
+mkdir -p /usr/local/lib/docker
+ln -s /Applications/Docker.app/Contents/Resources/cli-plugins /usr/local/lib/docker/cli-plugins
+```
+See: https://github.com/docker/for-mac/issues/6569#issuecomment-1312244210
+
 - Install https://code.visualstudio.com/download[VSCode IDE]
 - Install https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker&ssr=false#review-details[Docker extension]
 - Install remote extensions:
